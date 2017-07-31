@@ -1,18 +1,17 @@
 <?php
 
-use Goutte\Client; // UNCOMMENT TO USE THE CRAWLER OR DELETE
+use Goutte\Client;
 
 class Billboard extends Service
 {
 	/**
 	 * Function executed when the service is called
-	 * 
+	 *
 	 * @param Request
 	 * @return Response
 	 * */
 	public function _main(Request $request)
 	{
-
 		// create a new client
 		$client = new Client();
 		$guzzle = $client->getClient();
