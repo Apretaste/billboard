@@ -38,6 +38,7 @@ class Billboard extends Service
 
 		// create the response
 		$response = new Response();
+		$response->setCache("month");
 		$response->setResponseSubject("El Billboard");
 		$response->createFromTemplate("basic.tpl", $responseContent);
 		return $response;
