@@ -33,8 +33,10 @@ class Billboard extends Service
                 if ($artist->count() > 0) $artist = $artist->text(); else  $artist = "";
                 if ($rank_last_week->count() > 0) $rank_last_week = $rank_last_week->text(); else  $rank_last_week = "";
 
+                $title = explode(": ",$title->text());
+                $title = $title [0];
                 $tracks[] = [
-                    "song_title" => explode(": ",$title->text())[1],
+                    "song_title" => $title,
                     "artist" => $artist,
                     "rank_last_week" => $rank_last_week
                 ];
