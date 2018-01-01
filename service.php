@@ -14,11 +14,8 @@ class Billboard extends Service
 	 * */
 	public function _main(Request $request)
 	{
-		// create a new client
-		$client = $this->getCrawler();
-
 		// create a crawler
-		$crawler = $client->request('GET', "http://www.billboard.com/rss/charts/hot-100");
+		$crawler = $this->getCrawler("http://www.billboard.com/rss/charts/hot-100");
 
 		// search for result
 		$site_title = $crawler->filter('title')->text();
