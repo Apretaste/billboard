@@ -1,9 +1,11 @@
 <?php
 
 use Goutte\Client;
+use GuzzleHttp\Client as GuzzleClient;
 
 class Billboard extends Service
 {
+    public $client;
 	/**
 	 * Function executed when the service is called
 	 *
@@ -13,10 +15,7 @@ class Billboard extends Service
 	public function _main(Request $request)
 	{
 		// create a new client
-		$client = new Client();
-		$guzzle = $client->getClient();
-		$guzzle->setDefaultOption('verify', false);
-		$client->setClient($guzzle);
+		$client = $this->getCrawler();
 
 		// create a crawler
 		$crawler = $client->request('GET', "http://www.billboard.com/rss/charts/hot-100");
@@ -25,12 +24,25 @@ class Billboard extends Service
 		$site_title = $crawler->filter('title')->text();
 
 		// get tracks into array
-		$tracks = array();
+		$tracks = [];
 		$crawler->filter('item')->each(function($x) use(&$tracks){
-			$tracks[] = array(
-				"song_title" => explode(": ",$x->filter('title')->text())[1],
-				"artist" => $x->filter('artist')->text(),
-				"rank_last_week" => $x->filter('rank_last_week')->text()			);
+
+		    $title = $x->filter('title');
+		    $artist = $x->filter('artist');
+		    $rank_last_week = $x->filter('rank_last_week');
+
+		    if ($title->count() > 0)
+            {
+                if ($artist->count() > 0) $artist = $artist->text(); else  $artist = "";
+                if ($rank_last_week->count() > 0) $rank_last_week = $rank_last_week->text(); else  $rank_last_week = "";
+
+                $tracks[] = [
+                    "song_title" => explode(": ",$title->text())[1],
+                    "artist" => $artist,
+                    "rank_last_week" => $rank_last_week
+                ];
+            }
+
 		});
 
 		// create a json object to send to the template
@@ -43,4 +55,37 @@ class Billboard extends Service
 		$response->createFromTemplate("basic.tpl", $responseContent);
 		return $response;
 	}
+
+
+    /**
+     * Crawler client
+     *
+     * @return \Goutte\Client
+     */
+    public function getClient()
+    {
+        if (is_null($this->client))
+        {
+            $this->client = new Client();
+            $guzzle = new GuzzleClient(["verify" => false]);
+            $this->client->setClient($guzzle);
+        }
+        return $this->client;
+    }
+
+    /**
+     * Get crawler for URL
+     *
+     * @param string $url
+     *
+     * @return \Symfony\Component\DomCrawler\Crawler
+     */
+    protected function getCrawler ($url = "") {
+        $url = trim($url);
+        if ($url != '' && $url[0] == '/') $url = substr($url, 1);
+
+        $crawler = $this->getClient()->request("GET", self::$base_url . "/$url");
+
+        return $crawler;
+    }
 }
