@@ -84,7 +84,7 @@ class Billboard extends Service
         $url = trim($url);
         if ($url != '' && $url[0] == '/') $url = substr($url, 1);
 
-        $crawler = $this->getClient()->request("GET", self::$base_url . "/$url");
+        $crawler = $this->getClient()->request("GET", $url);
 
         return $crawler;
     }
