@@ -6,6 +6,26 @@ use GuzzleHttp\Client as GuzzleClient;
 class Billboard extends Service
 {
     public $client;
+
+    /**
+     * Clear a text
+     *
+     * @param string $txt Source
+     * @param string $chars List of chars to delete/keep
+     * @param bool $direction True for keep, false for delete
+     * @return string
+     */
+    function cleanTxt($txt, $chars, $direction = true)
+    {
+        $new_txt = '';
+        $l = strlen($txt);
+        for($i = 0; $i < $l; $i++)
+            if ((strpos($chars, $txt[$i])!== false) == $direction)
+                $new_txt .= $txt[$i];
+
+        return $new_txt;
+    }
+
 	/**
 	 * Function executed when the service is called
 	 *
@@ -15,27 +35,31 @@ class Billboard extends Service
 	public function _main(Request $request)
 	{
 		// create a crawler
-		$crawler = $this->getCrawler("http://www.billboard.com/rss/charts/hot-100");
+        $url = "http://www.billboard.com/rss/charts/hot-100";
 
-		// search for result
-		$site_title = $crawler->filter('title')->text();
+        $crawler = $this->getCrawler($url);
 
 		// get tracks into array
 		$tracks = [];
-		$crawler->filter('item')->each(function($x) use(&$tracks){
+		$crawler->filter('article.chart-row')->each(function($x) use(&$tracks){
 
-		    $title = $x->filter('title');
-		    $artist = $x->filter('artist');
-		    $rank_last_week = $x->filter('rank_last_week');
+		    $rank = $x->filter('.chart-row__current-week');
+		    $title = $x->filter('.chart-row__song');
+		    $artist = $x->filter('.chart-row__artist');
+		    $rank_last_week = $x->filter('.chart-row__last-week');
 
 		    if ($title->count() > 0)
             {
-                if ($artist->count() > 0) $artist = $artist->text(); else  $artist = "";
-                if ($rank_last_week->count() > 0) $rank_last_week = $rank_last_week->text(); else  $rank_last_week = "";
+                if ($artist->count() > 0) $artist =  $this->cleanTxt($artist->text(). "", "\n\r", false); else  $artist = "";
+                if ($rank_last_week->count() > 0) {
+                    $rank_last_week = $this->cleanTxt( $rank_last_week->text(). "", "1234567890");
+                }  else  $rank_last_week = "";
+                if ($rank->count() > 0) $rank = $this->cleanTxt($rank->text(). "", "1234567890"); else  $rank = "";
 
                 $title = explode(": ",$title->text());
                 $title = $title [0];
                 $tracks[] = [
+                    "rank" => $rank,
                     "song_title" => $title,
                     "artist" => $artist,
                     "rank_last_week" => $rank_last_week
