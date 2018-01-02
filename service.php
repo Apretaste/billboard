@@ -35,7 +35,7 @@ class Billboard extends Service
 	public function _main(Request $request)
 	{
 		// create a crawler
-        $url = "http://www.billboard.com/rss/charts/hot-100";
+        $url = "http://www.billboard.com/charts/hot-100";
 
         $crawler = $this->getCrawler($url);
 
