@@ -7,25 +7,6 @@ class Billboard extends Service
 {
     public $client;
 
-    /**
-     * Clear a text
-     *
-     * @param string $txt Source
-     * @param string $chars List of chars to delete/keep
-     * @param bool $direction True for keep, false for delete
-     * @return string
-     */
-    function cleanTxt($txt, $chars, $direction = true)
-    {
-        $new_txt = '';
-        $l = strlen($txt);
-        for($i = 0; $i < $l; $i++)
-            if ((strpos($chars, $txt[$i])!== false) == $direction)
-                $new_txt .= $txt[$i];
-
-        return $new_txt;
-    }
-
 	/**
 	 * Function executed when the service is called
 	 *
@@ -40,45 +21,66 @@ class Billboard extends Service
         $crawler = $this->getCrawler($url);
 
 		// get tracks into array
-		$tracks = [];
-		$crawler->filter('article.chart-row')->each(function($x) use(&$tracks){
+        $tracks = [];
 
-		    $rank = $x->filter('.chart-row__current-week');
-		    $title = $x->filter('.chart-row__song');
-		    $artist = $x->filter('.chart-row__artist');
-		    $rank_last_week = $x->filter('.chart-row__last-week');
+        $tracks[] = [
+            "rank" => "1",
+            "song_title" => $crawler->filter('div.chart-number-one__title')->text(),
+            "artist" => $crawler->filter('div.chart-number-one__artist')->text(),
+            "link" =>  $crawler->filter('div.chart-number-one__lyrics > a')->attr('href')];
 
-		    if ($title->count() > 0)
-            {
-                if ($artist->count() > 0) $artist =  $this->cleanTxt($artist->text(). "", "\n\r", false); else  $artist = "";
-                if ($rank_last_week->count() > 0) {
-                    $rank_last_week = $this->cleanTxt( $rank_last_week->text(). "", "1234567890");
-                }  else  $rank_last_week = "";
-                if ($rank->count() > 0) $rank = $this->cleanTxt($rank->text(). "", "1234567890"); else  $rank = "";
+        
 
-                $title = explode(": ",$title->text());
-                $title = $title [0];
-                $tracks[] = [
-                    "rank" => $rank,
-                    "song_title" => $title,
-                    "artist" => $artist,
-                    "rank_last_week" => $rank_last_week
-                ];
-            }
+		$crawler->filter('div.chart-list-item')->each(function($x) use(&$tracks){
+            $link=
 
-		});
+            $tracks[] = [
+                "rank" => $x->attr('data-rank'),
+                "song_title" => $x->attr('data-title'),
+                "artist" => $x->attr('data-artist'),
+                "link" => ($x->filter('div.chart-list-item__lyrics > a')->count()>0)?$x->filter('div.chart-list-item__lyrics > a')->attr('href'):false
+            ];
+        });
 
 		// create a json object to send to the template
 		$responseContent = array("tracks" => $tracks);
 
 		// create the response
 		$response = new Response();
-		$response->setCache("month");
+		$response->setCache("day");
 		$response->setResponseSubject("El Billboard");
 		$response->createFromTemplate("basic.tpl", $responseContent);
 		return $response;
 	}
 
+
+    /**
+     * Subservice to return the leter of a song in the billboard list
+     * @param Request
+     * @return Response
+     */
+
+     public function _letra(Request $request){
+         
+         if (strpos($request->query,'www.billboard.com')){
+            $crawler = $this->getCrawler($request->query);
+            $song = $crawler->filter('div.lyrics')->attr('data-lyric-title');
+            $artist = $crawler->filter('div.lyrics')->attr('data-lyric-artist');
+            $lyrics = $crawler->filter('div.lyrics')->html();
+            
+            $response=new Response();
+            $response->subject="Letra de $song - $artist";
+            $response->setCache("year");
+            $response->createFromTemplate('letra.tpl',array('song'=>$song,'artist'=>$artist,'lyrics'=>$lyrics));
+            return $response;
+         }
+         else{
+            $reponse=new Response();
+            $response->createFromText("Lo sentimos, la letra que usted busca no se encuentra");
+            return $response;
+         }
+        
+     }
 
     /**
      * Crawler client
