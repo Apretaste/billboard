@@ -64,6 +64,11 @@ class Billboard extends Service
          
          if (strpos($request->query,'www.billboard.com')){
             $crawler = $this->getCrawler($request->query);
+            if ($crawler->filter('div.lyrics')->count()<1) {
+                $response=new Response();
+                $response->createFromText("Lo sentimos, la letra que usted busca no esta en un formato que podamos procesar");
+                return $response;
+            }
             $song = $crawler->filter('div.lyrics')->attr('data-lyric-title');
             $artist = $crawler->filter('div.lyrics')->attr('data-lyric-artist');
             $lyrics = $crawler->filter('div.lyrics')->html();
@@ -75,7 +80,7 @@ class Billboard extends Service
             return $response;
          }
          else{
-            $reponse=new Response();
+            $response=new Response();
             $response->createFromText("Lo sentimos, la letra que usted busca no se encuentra");
             return $response;
          }
