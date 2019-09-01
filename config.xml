@@ -1,6 +1,0 @@
-<service>
-	<serviceName>billboard</serviceName>
-	<serviceDescription>Las 100 canciones mas populares del momento</serviceDescription>
-	<creatorEmail>enide.bellamy@gmail.com</creatorEmail>
-	<serviceCategory>ocio</serviceCategory>
-</service>

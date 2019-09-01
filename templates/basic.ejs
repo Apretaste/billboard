@@ -1,0 +1,31 @@
+<div class="row">
+	<div class="col s12 center">
+	<h1>100 canciones m&aacute;s populares</h1>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 center">
+		<small><p>Las 100 canciones m&aacute;s escuchadas en EU.
+				<font color="red">Como muchas son recientes, puede
+				que a&uacute;n no tengan letra</font>.</p></small>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col s12 center">
+		<ol>
+		<% for(var i=0; i < tracks.length; i++) {
+			var track = tracks[i]; %>
+			<li>
+				<strong><%= track.song_title %></strong><br/>
+				<small>by <%= track.artist %></small>
+				<% if (track.link) { %>
+					<br/>
+					<a href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>"><small>Letra</small></a>
+				<% } %>
+			</li>
+		<% } %>
+		</ol>
+	</div>
+</div>
