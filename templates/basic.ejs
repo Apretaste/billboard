@@ -5,7 +5,7 @@
 </div>
 
 <div class="row">
-	<div class="col s12 center">
+	<div class="col s12">
 		<small><p>Las 100 canciones m&aacute;s escuchadas en EU.
 				<font color="red">Como muchas son recientes, puede
 				que a&uacute;n no tengan letra</font>.</p></small>
@@ -13,7 +13,7 @@
 </div>
 
 <div class="row">
-	<div class="col s12 center">
+	<div class="col s12">
 		<ol>
 		<% for(var i=0; i < tracks.length; i++) {
 			var track = tracks[i]; %>
@@ -24,6 +24,7 @@
 					<br/>
 					<a href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>"><small>Letra</small></a>
 				<% } %>
+				<br/>
 			</li>
 		<% } %>
 		</ol>
