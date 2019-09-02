@@ -45,6 +45,7 @@ class BillboardService extends ApretasteService
 
         // create the response
         $this->response->setCache("day");
+        $this->response->setLayout('billboard.ejs');
         $this->response->setTemplate("basic.ejs", $responseContent);
     }
 
@@ -70,6 +71,7 @@ class BillboardService extends ApretasteService
             $lyrics = $crawler->filter('div.lyrics')->html();
 
             $this->response->setCache("year");
+            $this->response->setLayout('billboard.ejs');
             $this->response->setTemplate('letra.ejs', [
                 'song' => $song,
                 'artist' => $artist,
