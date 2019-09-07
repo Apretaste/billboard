@@ -6,9 +6,7 @@
 
 <div class="row">
 	<div class="col s12">
-		<small><p>Las 100 canciones m&aacute;s escuchadas en EU.
-				<font color="red">Como muchas son recientes, puede
-				que a&uacute;n no tengan letra</font>.</p></small>
+		<p>Las 100 canciones m&aacute;s escuchadas en EU. Como muchas son recientes, puede que a&uacute;n no tengan letra.</p>
 	</div>
 </div>
 
@@ -24,6 +22,8 @@
 					<div class="card-action">
 						<% if (track.link) { %>
 							<a href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>"><small>Letra</small></a>
+						<% } else { %>
+							<br/>
 						<% } %>
 					</div>
 				</div>
