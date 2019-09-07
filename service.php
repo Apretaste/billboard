@@ -55,7 +55,7 @@ class BillboardService extends ApretasteService
      */
     public function _letra()
     {
-
+        $this->response->setLayout('billboard.ejs');
         $query = $this->request->input->data->query;
         if (strpos($query, 'www.billboard.com')) {
             $crawler = $this->getCrawler($query);
@@ -71,9 +71,9 @@ class BillboardService extends ApretasteService
             $lyrics = $crawler->filter('div.lyrics')->html();
 
             $this->response->setCache("year");
-            $this->response->setLayout('billboard.ejs');
+
             $this->response->setTemplate('letra.ejs', [
-                'song' => $song,
+                'song'   => $song,
                 'artist' => $artist,
                 'lyrics' => $lyrics
             ]);
