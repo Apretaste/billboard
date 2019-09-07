@@ -14,15 +14,15 @@
 	<% for(var i=0; i < tracks.length; i++) {
 		var track = tracks[i]; %>
 			<div class="col s12 l4 m6 xl4">
-				<div class="card blue lighten-3">
+				<div class="card light-green lighten-5">
 					<div class="card-content song-card">
 						<span class="card-title"><%= track.song_title %></span>
 						<span class="badge blue darken-1 white-text"><%= i + 1 %></span>
 						<p>by <%= track.artist %></p>
 					</div>
-					<div class="card-action">
+					<div class="card-action blue-text">
 						<% if (track.link) { %>
-							<a href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>"><small>Letra</small></a>
+							<a class="blue-text" href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>">Letra</a>
 						<% } else { %>
 							<br/>
 						<% } %>
