@@ -18,17 +18,13 @@
 			var track = tracks[i]; %>
 				<div class="card grey lighten-5 z-depth-1">
 					<div class="card-content valign-wrapper">
-					  <span class="black-text">
-						<strong><%= track.song_title %></strong><br/>
-						 <small>by <%= track.artist %></small>
-					  </span>
+						<span class="card-title"><%= track.song_title %></span>
+						<p>by <%= track.artist %></p>
 					</div>
 					<div class="card-action">
 						<% if (track.link) { %>
-							<br/>
 							<a href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>"><small>Letra</small></a>
 						<% } %>
-					  <a href="#">This is a link</a>
 					</div>
 				</div>
 		<% } %>
