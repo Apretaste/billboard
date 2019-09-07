@@ -1,3 +1,8 @@
 .song-card {
   min-height: 10rem;
 }
+
+.song-card .badge {
+  font-size: 8rem;
+  color: #57b23b;
+}
