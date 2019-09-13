@@ -12,38 +12,36 @@ class BillboardService extends ApretasteService
 	 */
 	public function _main()
 	{
-		// create a crawler
-		$url = "http://www.billboard.com/charts/hot-100";
+		// load from cache if exists
+		$cache = Utils::getTempDir() . date("Ym") . "_billboard.tmp";
+		if(file_exists($cache)) $content = unserialize(file_get_contents($cache));
 
-		$crawler = $this->getCrawler($url);
+		// get data from the internet
+		else {
+			// create a crawler
+			$crawler = $this->getCrawler("http://www.billboard.com/charts/hot-100");
 
-		// get tracks into array
-		$tracks = [];
+			// get tracks into an array
+			$tracks = [];
+			$crawler->filter('div.chart-list-item')->each(function ($x) use (&$tracks) {
+				$tracks[] = [
+					"rank"       => $x->attr('data-rank'),
+					"song_title" => $x->attr('data-title'),
+					"artist"     => $x->attr('data-artist'),
+					"link"       => ($x->filter('div.chart-list-item__lyrics > a')->count() > 0) ? $x->filter('div.chart-list-item__lyrics > a')->attr('href') : false
+				];
+			});
 
-		$tracks[] = [
-			"rank"       => "1",
-			"song_title" => $crawler->filter('div.chart-number-one__title')->text(),
-			"artist"     => $crawler->filter('div.chart-number-one__artist')->text(),
-			"link"       => $crawler->filter('div.chart-number-one__lyrics > a')->attr('href')
-		];
+			// create a json object to send to the template
+			$content = ["tracks" => $tracks];
 
-		$crawler->filter('div.chart-list-item')->each(function ($x) use (&$tracks) {
-			$link =
-
-			$tracks[] = [
-				"rank"       => $x->attr('data-rank'),
-				"song_title" => $x->attr('data-title'),
-				"artist"     => $x->attr('data-artist'),
-				"link"       => ($x->filter('div.chart-list-item__lyrics > a')->count() > 0) ? $x->filter('div.chart-list-item__lyrics > a')->attr('href') : false
-			];
-		});
-
-		// create a json object to send to the template
-		$responseContent = ["tracks" => $tracks];
+			// save cache file
+			file_put_contents($cache, serialize($content));
+		}
 
 		// create the response
-		$this->response->setCache("day");
-		$this->response->setTemplate("basic.ejs", $responseContent);
+		$this->response->setCache("month");
+		$this->response->setTemplate("basic.ejs", $content);
 	}
 
 	/**
@@ -51,33 +49,49 @@ class BillboardService extends ApretasteService
 	 */
 	public function _letra()
 	{
+		// get the query
 		$query = $this->request->input->data->query;
 
-		if (strpos($query, 'www.billboard.com')) {
-			$crawler = $this->getCrawler($query);
-			if ($crawler->filter('div.lyrics')->count() < 1) {
-				$this->simpleMessage("No se pudo procesar la letra de la canci&oacute;n",
-					"Lo sentimos, la letra que usted busca no esta en un formato que podamos procesar");
+		// do not allow lyrics with problems
+		if ( ! strpos($query, 'www.billboard.com')) {
+			$this->simpleMessage("Letra no encontrada", "Lo sentimos, la letra que usted busca no se encuentra");
+			return;
+		}
 
+		// load from cache if exists
+		$cache = Utils::getTempDir() . date("Y") . "_billboard_" . md5($query) . ".tmp";
+		if(file_exists($cache)) $content = unserialize(file_get_contents($cache));
+
+		// get data from the internet
+		else {
+			// connect to crawler
+			$crawler = $this->getCrawler($query);
+
+			// do not allow bad lyrics
+			if ($crawler->filter('div.lyrics')->count() < 1) {
+				$this->simpleMessage("No se pudo procesar la letra de la canción", "Lo sentimos, la letra que usted busca no esta en un formato que podamos procesar");
 				return;
 			}
 
+			// get params from the song
 			$song = $crawler->filter('div.lyrics')->attr('data-lyric-title');
 			$artist = $crawler->filter('div.lyrics')->attr('data-lyric-artist');
 			$lyrics = $crawler->filter('div.lyrics')->html();
 
-			$this->response->setCache("year");
-
-			$this->response->setTemplate('letra.ejs', [
+			// create object for the view
+			$content = [
 				'song'   => $song,
 				'artist' => $artist,
 				'lyrics' => $lyrics
-			]);
+			];
 
-			return;
+			// save cache file
+			file_put_contents($cache, serialize($content));
 		}
 
-		$this->simpleMessage("Letra no encontrada", "Lo sentimos, la letra que usted busca no se encuentra");
+		// send data to the view
+		$this->response->setCache("year");
+		$this->response->setTemplate('letra.ejs', $content);
 	}
 
 	/**
