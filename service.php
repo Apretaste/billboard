@@ -85,7 +85,7 @@ class BillboardService extends ApretasteService
             } else {
                 $song = "";
                 $crawler->filter('div.article__body p')->each(function(Crawler $element) use (&$song){
-                    $song .= strip_tags($element->text()())."<br/>";
+                    $song .= strip_tags($element->text()())."\n";
                 });
 
                 $artist = $crawler->filter('figcaption > div.media__caption')->text();
@@ -96,6 +96,8 @@ class BillboardService extends ApretasteService
             if ($p !== false) {
                 $song = substr($song, $p);
             }
+
+            $song = strip_tags($song);
 
             // create object for the view
             $content = [
