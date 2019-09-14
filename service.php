@@ -42,6 +42,7 @@ class BillboardService extends ApretasteService
         }
 
         // create the response
+        $this->response->setLayout('billboard.ejs');
         $this->response->setCache("month");
         $this->response->setTemplate("basic.ejs", $content);
     }
@@ -112,7 +113,8 @@ class BillboardService extends ApretasteService
         }
 
         // send data to the view
-        ///$this->response->setCache("year");
+        $this->response->setLayout('billboard.ejs');
+        $this->response->setCache("year");
         $this->response->setTemplate('letra.ejs', $content);
     }
 
