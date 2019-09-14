@@ -110,7 +110,7 @@ class BillboardService extends ApretasteService
         }
 
         // send data to the view
-        $this->response->setCache("year");
+        ///$this->response->setCache("year");
         $this->response->setTemplate('letra.ejs', $content);
     }
 
