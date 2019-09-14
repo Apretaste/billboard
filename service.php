@@ -91,12 +91,12 @@ class BillboardService extends ApretasteService
                 });
             }
 
-            $p = strpos($song, '<a ');
+            $p = strpos($lyrics, '<a ');
             if ($p !== false) {
-                $song = substr($song, $p);
+                $lyrics = substr($lyrics, $p);
             }
 
-            $song = nl2br(strip_tags($song));
+            $lyrics = nl2br(strip_tags($lyrics));
 
             // create object for the view
             $content = [
