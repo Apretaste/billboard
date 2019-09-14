@@ -53,6 +53,7 @@ class BillboardService extends ApretasteService
     {
         // get the query
         $query = $this->request->input->data->query;
+        $number = $this->request->input->data->number;
 
         // do not allow lyrics with problems
         if (!strpos($query, 'www.billboard.com')) {
@@ -100,6 +101,7 @@ class BillboardService extends ApretasteService
 
             // create object for the view
             $content = [
+                'number' => $number,
                 'song'   => $song,
                 'artist' => $artist,
                 'lyrics' => $lyrics
