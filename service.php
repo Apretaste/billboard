@@ -87,7 +87,7 @@ class BillboardService extends ApretasteService
                 $song = $crawler->filter('h1.article__headline')->text();
                 $lyrics = "";
                 $crawler->filter('div.article__body p')->each(function(Crawler $element) use (&$lyrics){
-                    $lyrics .= strip_tags($element->text()())."\n";
+                    $lyrics .= strip_tags($element->text())."\n";
                 });
             }
 
