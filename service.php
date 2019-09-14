@@ -85,7 +85,7 @@ class BillboardService extends ApretasteService
             } else {
                 $song = "";
                 $crawler->filter('div.article__body p')->each(function(Crawler $element) use (&$song){
-                    $song .= $element->html()."<br/>";
+                    $song .= strip_tags($element->html())."<br/>";
                 });
 
                 $artist = $crawler->filter('figcaption > div.media__caption')->html();
