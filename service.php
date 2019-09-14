@@ -79,7 +79,7 @@ class BillboardService extends ApretasteService
 
             // get params from the song
             if ($crawler->filter('div.lyrics')->count() > 1) {
-                $song = $crawler->filter('div.lyrics')->attr('data-lyric-title');
+                $song = strip_tags($crawler->filter('div.lyrics')->attr('data-lyric-title'));
                 $artist = $crawler->filter('div.lyrics')->attr('data-lyric-artist');
                 $lyrics = $crawler->filter('div.lyrics')->html();
             } else {
