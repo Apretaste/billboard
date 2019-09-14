@@ -83,13 +83,13 @@ class BillboardService extends ApretasteService
                 $artist = $crawler->filter('div.lyrics')->attr('data-lyric-artist');
                 $lyrics = $crawler->filter('div.lyrics')->html();
             } else {
-                $song = "";
-                $crawler->filter('div.article__body p')->each(function(Crawler $element) use (&$song){
-                    $song .= strip_tags($element->text()())."\n";
+                $artist = $crawler->filter('figcaption > div.media__caption')->text();
+                $song = $crawler->filter('h1.article__headline')->text();
+                $lyrics = "";
+                $crawler->filter('div.article__body p')->each(function(Crawler $element) use (&$lyrics){
+                    $lyrics .= strip_tags($element->text()())."\n";
                 });
 
-                $artist = $crawler->filter('figcaption > div.media__caption')->text();
-                $lyrics = $crawler->filter('h1.article__headline')->text();
             }
 
             $p = strpos($song, '<a ');
@@ -97,7 +97,7 @@ class BillboardService extends ApretasteService
                 $song = substr($song, $p);
             }
 
-            $song = strip_tags($song);
+            $song = nl2br(strip_tags($song));
 
             // create object for the view
             $content = [
