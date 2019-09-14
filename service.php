@@ -62,7 +62,7 @@ class BillboardService extends ApretasteService
         }
 
         // load from cache if exists
-        $cache = Utils::getTempDir().date("Y")."_billboard_".md5($query).".tmp";
+        $cache = Utils::getTempDir().date("Y")."_billboard_".md5($query)."_".md5_file(__FILE__).".tmp";
         if (file_exists($cache)) {
             $content = unserialize(file_get_contents($cache));
         } // get data from the internet
