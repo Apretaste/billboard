@@ -98,7 +98,7 @@ class BillboardService extends ApretasteService
                 $lyrics = substr($lyrics, 0, $p);
             }
 
-            $lyrics = nl2br(strip_tags($lyrics));
+            $lyrics = nl2br(strip_tags($lyrics,'br'));
 
             // create object for the view
             $content = [
