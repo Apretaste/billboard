@@ -95,7 +95,7 @@ class BillboardService extends ApretasteService
 
             $p = strpos($lyrics, '<a ');
             if ($p !== false) {
-                $lyrics = substr($lyrics, $p);
+                $lyrics = substr($lyrics, 0, $p);
             }
 
             $lyrics = nl2br(strip_tags($lyrics));
