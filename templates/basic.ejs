@@ -17,7 +17,7 @@
 				</div>
 				<div class="card-action blue-text">
 					<% if (track.link) { %>
-						<a class="blue-text" href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link}}); %>">Letra</a>
+						<a class="blue-text" href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link, number: <%= i + 1 %>}}); %>">Letra</a>
 					<% } else { %>
 						<br/>
 					<% } %>
