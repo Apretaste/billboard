@@ -6,21 +6,16 @@
 </div>
 
 <div class="row">
-	<% for(var i=0; i < tracks.length; i++) {
-		var track = tracks[i]; %>
+	<% for(var i=0; i < tracks.length; i++) { %>
 		<div class="col s12 m6 xl4">
 			<div class="card light-green lighten-5">
 				<div class="card-content song-card">
-					<span class="card-title"><%= track.song_title %></span>
+					<span class="card-title"><%= tracks[i].title %></span>
 					<span class="badge"><%= i + 1 %></span>
-					<p class="blue-grey-text">Por <%= track.artist %></p>
+					<p class="blue-grey-text">Por <%= tracks[i].artist %></p>
 				</div>
 				<div class="card-action blue-text">
-					<% if (track.link) { %>
-						<a class="blue-text" href="#!" onclick="apretaste.send({command: 'BILLBOARD LETRA', data: {query: tracks[<%= i %>].link, number: <%= i + 1 %>}}); %>">Letra</a>
-					<% } else { %>
-						<br/>
-					<% } %>
+					<a class="blue-text" href="#!" onclick="apretaste.send({command:'LETRAS SEARCH', data:{query:'<%= tracks[i].title %>'}})">Letra</a>
 				</div>
 			</div>
 		</div>
