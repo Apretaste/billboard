@@ -42,6 +42,8 @@ class Service
 		$response->setLayout('billboard.ejs');
 		$response->setCache("month");
 		$response->setTemplate("basic.ejs", $content);
+
+		Challenges::complete("view-billboard", $request->person->id);
 	}
 
 	/**
