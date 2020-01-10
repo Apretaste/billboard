@@ -1,5 +1,9 @@
 <?php
 
+use Apretaste\Request;
+use Apretaste\Response;
+use Framework\Database;
+use Apretaste\Challenges;
 use Goutte\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use Symfony\Component\DomCrawler\Crawler;
@@ -10,29 +14,34 @@ class Service
 
 	/**
 	 * Function executed when the service is called
+	 *
+	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Response $response
+	 *
+	 * @throws \Framework\Alert
 	 */
-	public function _main(Request $request, Response $response)
+	public function _main(Request $request, Response &$response)
 	{
 		// load from cache if exists
-		$cache = Utils::getTempDir().date("Ym")."_billboard.tmp";
+		$cache = TEMP_PATH.date('Ym').'_billboard.tmp';
 		if (file_exists($cache)) {
 			$content = unserialize(file_get_contents($cache));
 		} // get data from the internet
 		else {
 			// create a crawler
-			$crawler = $this->getCrawler("http://www.billboard.com/charts/hot-100");
+			$crawler = $this->getCrawler('http://www.billboard.com/charts/hot-100');
 
 			// get tracks into an array
 			$tracks = [];
 			$crawler->filter('.chart-element__information')->each(function ($x) use (&$tracks) {
 				$tracks[] = [
-					"title" => $x->filter('.chart-element__information__song')->text(),
-					"artist" => $x->filter('.chart-element__information__artist')->text()
+						'title'  => $x->filter('.chart-element__information__song')->text(),
+						'artist' => $x->filter('.chart-element__information__artist')->text()
 				];
 			});
 
 			// create a json object to send to the template
-			$content = ["tracks" => $tracks];
+			$content = ['tracks' => $tracks];
 
 			// save cache file
 			file_put_contents($cache, serialize($content));
@@ -40,10 +49,10 @@ class Service
 
 		// create the response
 		$response->setLayout('billboard.ejs');
-		$response->setCache("month");
-		$response->setTemplate("basic.ejs", $content);
+		$response->setCache('month');
+		$response->setTemplate('basic.ejs', $content);
 
-		Challenges::complete("view-billboard", $request->person->id);
+		Challenges::complete('view-billboard', $request->person->id);
 	}
 
 	/**
@@ -52,20 +61,18 @@ class Service
 	 * @param string $url
 	 * @return \Symfony\Component\DomCrawler\Crawler
 	 */
-	private function getCrawler($url = "")
-	{
+	private function getCrawler($url = ''): Crawler {
 		$url = trim($url);
-		if ($url != '' && $url[0] == '/') {
+		if ($url !== '' && strpos($url, '/') === 0) {
 			$url = substr($url, 1);
 		}
 
-		if (is_null($this->client)) {
+		if ($this->client===null) {
 			$this->client = new Client();
-			$guzzle = new GuzzleClient(["verify" => false]);
+			$guzzle = new GuzzleClient(['verify' => false]);
 			$this->client->setClient($guzzle);
 		}
 
-		$crawler = $this->client->request("GET", $url);
-		return $crawler;
+		return $this->client->request('GET', $url);
 	}
 }
