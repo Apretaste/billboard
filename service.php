@@ -12,7 +12,7 @@ class Service
 	/**
 	 * Function executed when the service is called
 	 *
-	 * @param \Apretaste\Request  $request
+	 * @param \Apretaste\Request $request
 	 * @param \Apretaste\Response $response
 	 *
 	 * @throws \Framework\Alert
@@ -32,7 +32,7 @@ class Service
 			$tracks = [];
 			Crawler::filter('.chart-element__information')->each(function ($x) use (&$tracks) {
 				$tracks[] = [
-						'title'  => $x->filter('.chart-element__information__song')->text(),
+						'title' => $x->filter('.chart-element__information__song')->text(),
 						'artist' => $x->filter('.chart-element__information__artist')->text()
 				];
 			});
