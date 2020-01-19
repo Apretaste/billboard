@@ -2,11 +2,8 @@
 
 use Apretaste\Request;
 use Apretaste\Response;
-use Framework\Database;
 use Apretaste\Challenges;
-use Goutte\Client;
-use GuzzleHttp\Client as GuzzleClient;
-use Symfony\Component\DomCrawler\Crawler;
+use Framework\Crawler;
 
 class Service
 {
@@ -29,11 +26,11 @@ class Service
 		} // get data from the internet
 		else {
 			// create a crawler
-			$crawler = $this->getCrawler('http://www.billboard.com/charts/hot-100');
+			Crawler::start('http://www.billboard.com/charts/hot-100');
 
 			// get tracks into an array
 			$tracks = [];
-			$crawler->filter('.chart-element__information')->each(function ($x) use (&$tracks) {
+			Crawler::filter('.chart-element__information')->each(function ($x) use (&$tracks) {
 				$tracks[] = [
 						'title'  => $x->filter('.chart-element__information__song')->text(),
 						'artist' => $x->filter('.chart-element__information__artist')->text()
@@ -53,26 +50,5 @@ class Service
 		$response->setTemplate('basic.ejs', $content);
 
 		Challenges::complete('view-billboard', $request->person->id);
-	}
-
-	/**
-	 * Get crawler for URL
-	 *
-	 * @param string $url
-	 * @return \Symfony\Component\DomCrawler\Crawler
-	 */
-	private function getCrawler($url = ''): Crawler {
-		$url = trim($url);
-		if ($url !== '' && strpos($url, '/') === 0) {
-			$url = substr($url, 1);
-		}
-
-		if ($this->client===null) {
-			$this->client = new Client();
-			$guzzle = new GuzzleClient(['verify' => false]);
-			$this->client->setClient($guzzle);
-		}
-
-		return $this->client->request('GET', $url);
 	}
 }
