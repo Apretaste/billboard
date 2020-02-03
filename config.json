@@ -1,9 +1,9 @@
 {
 	"name": "billboard",
-	"description": "Las 100 canciones mas populares del momento en los Estados Unidos",
+	"caption": "Billboard",
+	"description": "Las 100 canciones más populares del momento en los Estados Unidos",
 	"category": "ocio",
 	"creator": "kumahacker@gmail.com",
 	"listed": true,
-	"guest": true,
-	"caption": "Billboard"
+	"guest": true
 }
